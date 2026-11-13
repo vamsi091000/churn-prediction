@@ -1035,7 +1035,7 @@ def interpret_models(models, X_test, y_test, results):
     dt = models["Decision Tree"]
     full_rules = decision_tree_rules(dt)
     top_rules = decision_tree_rules(dt, max_depth=3)
-    with open(f"{OUTPUT_DIR}/decision_tree_rules.txt", "w") as f:
+    with open(f"{OUTPUT_DIR}/decision_tree_rules.txt", "w", encoding="utf-8") as f:
         f.write("Decision Tree rules – original units. [n = training customers in the branch, "
                 "churn = their churn rate]\n\n" + full_rules)
     print("\nDecision Tree – first 3 levels (n = training customers in the branch, churn = their churn rate):")

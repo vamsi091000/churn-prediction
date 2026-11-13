@@ -500,7 +500,13 @@ def page_insights(selected):
         rules = f"{OUT}/decision_tree_rules.txt"
         if os.path.exists(rules):
             with st.expander("Full decision tree rules"):
-                st.code(open(rules).read(), language=None)
+                try:
+                    with open(rules, encoding="utf-8") as rules_file:
+                        rules_text = rules_file.read()
+                except UnicodeDecodeError:
+                    with open(rules, encoding="cp1252") as rules_file:
+                        rules_text = rules_file.read()
+                st.code(rules_text, language=None)
 
     with tabs[1]:
         imp = read_csv_if_exists(f"{OUT}/permutation_importance.csv")
