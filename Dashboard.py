@@ -2,16 +2,15 @@
 """
 Customer Churn Dashboard (Streamlit)
 
-Built on the pipeline Churnthreshold.py (Steps 1-5c).
+Built on the pipeline Churnthreshold.py (Steps 1-5c). The source CSV is read
+directly from the project's public GitHub repository.
 
-Run locally (after Churnthreshold.py has been run once, so outputs/ exists):
+Run locally (after the pipeline artifacts have been generated in outputs/):
     pip install -r requirements.txt
-    python Churnthreshold.py
     streamlit run Dashboard.py
 
 Needs in the same folder:
     Churnthreshold.py                       (leakage list, split settings, helpers are reused)
-    E-commerce_Customer_Churn_2026.csv
     outputs/                                (models, scores and charts written by the pipeline)
 
 Pages (pipeline step in brackets)
@@ -48,6 +47,10 @@ if APP_DIR not in sys.path:
 
 # Name of the pipeline file WITHOUT ".py". Change this if you saved it under another name.
 PIPELINE_MODULE = "Churnthreshold"
+DATA_URL = (
+    "https://raw.githubusercontent.com/vamsi091000/churn-prediction/"
+    "main/E-commerce_Customer_Churn_2026.csv"
+)
 try:
     cp = importlib.import_module(PIPELINE_MODULE)
 except ModuleNotFoundError as err:
@@ -92,6 +95,11 @@ def metrics_at(y_true, prob, t):
 # =============================================================================
 # Data and models (cached so they load once per session)
 # =============================================================================
+@st.cache_data(show_spinner="Loading dataset from GitHub…")
+def load_raw_data(url):
+    return pd.read_csv(url)
+
+
 def require(path):
     if not os.path.exists(path):
         st.error(f"Missing file: `{path}`. Run `python {PIPELINE_MODULE}.py` first, "
@@ -102,7 +110,7 @@ def require(path):
 
 @st.cache_data(show_spinner="Loading data…")
 def load_data():
-    raw = pd.read_csv(require(cp.PATH))
+    raw = load_raw_data(DATA_URL)
     data = raw.drop(columns=[c for c in cp.LEAK_COLS if c in raw.columns])
     X, y = data.drop(columns=[cp.TARGET]), data[cp.TARGET]
     # exactly the same split as the pipeline, so "test" here is the same untouched test set
@@ -115,7 +123,7 @@ def load_data():
 @st.cache_data(show_spinner="Checking leakage columns…")
 def leakage_table():
     """For every dropped column: its group, and how perfectly it separates churners (from the raw data)."""
-    raw = pd.read_csv(require(cp.PATH))
+    raw = load_raw_data(DATA_URL)
     y = raw[cp.TARGET]
     groups = {
         "post_churn": ("Filled in only after churn", "Not known before the customer leaves"),

@@ -1,0 +1,5 @@
+model,tuned_on_rows,baseline_cv_auc,tuned_cv_auc,tuned_cv_std,best_params
+Random Forest,40000,0.7305990648833482,0.771150147685735,0.003453234833311648,"{'class_weight': 'balanced', 'max_depth': 8, 'max_features': 'sqrt', 'min_samples_leaf': 20}"
+Decision Tree,40000,0.6117384276430713,0.7695533641944068,0.0032563387937238225,"{'class_weight': None, 'criterion': 'gini', 'max_depth': 6, 'min_samples_leaf': 100}"
+Logistic Regression,40000,0.7496834587054579,0.7497199621398669,0.003757349976646079,"{'C': 0.1, 'class_weight': None, 'penalty': 'l1'}"
+SVM,5000,0.734648621669671,0.7490634448564746,0.009451027848749032,"{'C': 0.1, 'class_weight': 'balanced', 'gamma': 'scale'}"
